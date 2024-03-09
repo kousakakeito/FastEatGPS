@@ -21,4 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 use App\Http\Controllers\RestaurantController;
 
-Route::post('/fetch-restaurants', [RestaurantController::class, 'fetch']);
+Route::post('/find-restaurants', [RestaurantController::class, 'findRestaurants']);

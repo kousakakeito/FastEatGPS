@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -6,11 +7,10 @@ use GuzzleHttp\Client;
 
 class RestaurantController extends Controller
 {
-    public function fetch(Request $request)
+    public function findRestaurants(Request $request)
     {
-
-        $lat = '35.689487';
-        $lng = '139.691706';
+        $lat = $request->input('lat', '35.689487');//仮
+        $lng = $request->input('lng', '139.691706');
 
         $client = new Client();
         $response = $client->request('GET', 'https://maps.googleapis.com/maps/api/place/nearbysearch/json', [
@@ -18,7 +18,8 @@ class RestaurantController extends Controller
                 'location' => $lat . ',' . $lng,
                 'radius' => 1000,
                 'type' => 'restaurant',
-                'key' => 'YOUR_GOOGLE_MAPS_API_KEY'
+                'opennow' => true,
+                'key' => ''
             ]
         ]);
 
@@ -27,16 +28,20 @@ class RestaurantController extends Controller
 
         foreach ($data['results'] as $result) {
             if (count($restaurants) >= 50) break;
+            $distance = '距離';
+
+            $imageReference = isset($result['photos'][0]['photo_reference']) ? $result['photos'][0]['photo_reference'] : '';
+
             $restaurants[] = [
                 'name' => $result['name'],
-                'distance' => '距離' 
+                'distance' => $distance,
+                'image' => $imageReference
             ];
         }
 
         return response()->json($restaurants);
     }
 }
-
 
 
 
